@@ -10,6 +10,7 @@ const Navbar = () => {
                 <Bars className="text-green-300" />
 
                 <NavMenu className="flex items-center">
+                    <NavLink to="/" className="text-green-300 px-4 py-2">Home</NavLink>
                     <NavLink to="/about" className="text-green-300 px-4 py-2">About</NavLink>
                     <NavLink to="/events" className="text-green-300 px-4 py-2">Events</NavLink>
                     {/* <NavLink to="/annual" className="text-green-300 px-4 py-2">Annual Report</NavLink>

@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import Cart from './components/Cart/Cart';
 import ProductDetails from './pages/ProductDetails';
 import Footer from "./components/Footer/Footer";
+import SellerForm from './pages/SellerForm';
+import SellerDashboard from './pages/SellerDashboard';
 
 import {
     BrowserRouter as Router,
@@ -19,6 +21,7 @@ import AnnualReport from "./pages/annual";
 import Teams from "./pages/team";
 import Blogs from "./pages/blogs";
 import SignUp from "./pages/signup";
+import AddPlant from './components/AddPlant/AddPlant';
 import CategoryDetails from './pages/CategoryDetails'; 
 
 function App() {
@@ -37,7 +40,10 @@ function App() {
                         <Route path="/sign-up" element={<SignUp />} />
                         <Route path="/category/:id" element={<CategoryDetails />} />
                         <Route path="/cart" element={<Cart />} /> 
-                        <Route path="/product/:id" component={ProductDetails} />
+                        <Route path="/product/:id" Component={ProductDetails} />
+                        <Route path="/become-seller" element={<SellerForm />} />
+                        <Route path="/seller-dashboard" element={<SellerDashboard/>} />
+                        <Route path="/add-plant" element={<AddPlant />} />
                     </Routes>
                     
                 </main>

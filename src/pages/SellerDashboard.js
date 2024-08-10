@@ -1,27 +1,34 @@
-// src/pages/SellerDashboard.js
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import MyPlants from '../components/MyPlants/MyPlants';
 
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+const SellerDashboard = ({ sellerName }) => {
+    const [plants, setPlants] = useState([]); // This would ideally come from your backend
+    const [showMyPlants, setShowMyPlants] = useState(false);
 
-const SellerDashboard = () => {
-    const location = useLocation();
-    const { formData } = location.state || {}; // Get formData from state
-
-    if (!formData) {
-        return <div>No seller details available</div>;
-    }
+    const handleAddPlant = (newPlant) => {
+        setPlants([...plants, newPlant]);
+    };
 
     return (
         <div className="min-h-screen bg-green-50 p-8">
-            <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <h1 className="text-3xl font-bold text-green-800 mb-4">Seller Dashboard</h1>
-                <h2 className="text-2xl font-semibold text-green-700 mb-2">Welcome, {formData.name}</h2>
-                <p className="text-gray-700"><strong>Email:</strong> {formData.email}</p>
-                <p className="text-gray-700"><strong>Phone:</strong> {formData.phone}</p>
-                <p className="text-gray-700"><strong>Address:</strong> {formData.address}</p>
-                <p className="text-gray-700"><strong>Shop Name:</strong> {formData.shopName}</p>
-                <p className="text-gray-700"><strong>Shop Description:</strong> {formData.shopDescription}</p>
+            <h1 className="text-3xl font-bold text-green-800 mb-8">Hi, {sellerName}</h1>
+            
+            {/* Container for buttons, arranged in a row */}
+            <div className="flex space-x-4 mb-4">
+                <button
+                    onClick={() => setShowMyPlants(!showMyPlants)}
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                >
+                    {showMyPlants ? 'Hide My Plants' : 'Show My Plants'}
+                </button>
+                <Link to="/add-plant" className="bg-green-500 text-white px-4 py-2 rounded">
+                    Add New Plant
+                </Link>
             </div>
+
+            {/* Show plants if 'Show My Plants' is toggled */}
+            {showMyPlants && <MyPlants plants={plants} />}
         </div>
     );
 };

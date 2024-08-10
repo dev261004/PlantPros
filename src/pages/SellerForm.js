@@ -1,10 +1,10 @@
 // src/pages/SellerForm.js
 
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const SellerForm = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -25,7 +25,7 @@ const SellerForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Save formData to backend or local storage
-        history.push('/seller-dashboard', { formData });
+        navigate('/seller-dashboard', { state: { formData } });
     };
 
     return (

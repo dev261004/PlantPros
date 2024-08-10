@@ -5,7 +5,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 
 export const Nav = styled.nav`
-  background: #2d3748; /* bg-green-800 */
+  // background: #2d3748; /* bg-green-800 */
   height: 80px;
   display: flex;
   justify-content: space-between;
@@ -14,7 +14,7 @@ export const Nav = styled.nav`
 `;
 
 export const NavLink = styled(Link)`
-  color: #a0aec0; /* text-green-300 */
+  // color: #a0aec0; /* text-green-300 */
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -23,13 +23,13 @@ export const NavLink = styled(Link)`
   cursor: pointer;
   
   &.active {
-    color: #63b3ed; /* text-blue-300 */
+    // color: #63b3ed; /* text-blue-300 */
   }
 `;
 
 export const Bars = styled(FaBars)`
   display: none;
-  color: #a0aec0; /* text-green-300 */
+  // color: #a0aec0; /* text-green-300 */
 
   @media screen and (max-width: 768px) {
     display: block;

@@ -1,7 +1,7 @@
 // src/pages/CategoryDetails.js
 
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Product from '../components/Product/Product';
 import indoor from '../assets/indore-plat.jpg';
 import cacti from '../assets/cacti-succulents.jpg';
