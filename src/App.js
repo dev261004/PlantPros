@@ -21,6 +21,7 @@ import AnnualReport from "./pages/annual";
 import Teams from "./pages/team";
 import Blogs from "./pages/blogs";
 import SignUp from "./pages/signup";
+import LogIn from "./pages/login";
 import AddPlant from './components/AddPlant/AddPlant';
 import CategoryDetails from './pages/CategoryDetails'; 
 
@@ -37,6 +38,7 @@ function App() {
                         <Route path="/annual" element={<AnnualReport />} />
                         <Route path="/team" element={<Teams />} />
                         <Route path="/blogs" element={<Blogs />} />
+                        <Route path="/login" element={<LogIn />} />
                         <Route path="/sign-up" element={<SignUp />} />
                         <Route path="/category/:id" element={<CategoryDetails />} />
                         <Route path="/cart" element={<Cart />} /> 
