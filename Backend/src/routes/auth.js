@@ -1,11 +1,11 @@
-const express = require('express');
-const passport = require('passport');
-const router = express.Router();
+import { Router } from 'express';
+import { authenticate } from 'passport';
+const router = Router();
 
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/' }),
+  authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     // Successful authentication, redirect home.
     res.redirect('/');
@@ -18,4 +18,4 @@ router.get('/logout', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

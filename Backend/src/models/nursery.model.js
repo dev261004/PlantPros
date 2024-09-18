@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-
-const validator = require('validator');
+import mongoose from "mongoose";
+import pkg from 'validator';
+const {isEmail,isMobilePhone} = pkg;
 
 const nurserySchema = new mongoose.Schema({
     user: {
@@ -61,7 +61,7 @@ const nurserySchema = new mongoose.Schema({
         required: [true, "Nursery Email is required."],
         unique: [true, "This email is already in used."],
         validate(email) {
-            if (!validator.isEmail(email)) {
+            if (!isEmail(email)) {
                 throw new Error("Invalid Email.");
             }
         }
@@ -71,7 +71,7 @@ const nurserySchema = new mongoose.Schema({
         required: [true, "Nursery Phone is required."],
         unique: [true, "This phone is already in used."],
         validate(phone) {
-            if (!validator.isMobilePhone(phone, 'en-IN')) {
+            if (!isMobilePhone(phone, 'en-IN')) {
                 throw new Error("Invalid Phone.");
             }
         }
@@ -94,6 +94,5 @@ const nurserySchema = new mongoose.Schema({
     }
 });
 
-const nursery = new mongoose.model('nursery', nurserySchema);
+export const nursery = new mongoose.model('nursery', nurserySchema);
 
-module.exports = nursery;

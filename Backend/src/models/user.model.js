@@ -32,6 +32,9 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String
+        }, role: {
+            type: [String], // or another appropriate type
+            default: []
         }
 
     },
@@ -65,6 +68,7 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 }
+
 userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {

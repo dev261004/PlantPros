@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from "mongoose";
 const plantsSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
@@ -102,6 +101,4 @@ plantsSchema.methods.increaseVisit = async function () {
     }
 }
 
-const plant = new mongoose.model('plant', plantsSchema);
-
-module.exports = plant;
+export const plant = new mongoose.model('plant', plantsSchema);

@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
+import pkg from 'validator';
+const { isMobilePhone, isPostalCode } = pkg;  // Correctly import functions
 
-const validator = require('validator');
 
-const addressSchema = new mongoose.Schema({
+const addressSchema = new Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: [true, "User Id is required"],
         immutable: true
@@ -16,19 +17,21 @@ const addressSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: [true, "Phone number is required"],
-        validate(phone) {
-            if (!validator.isMobilePhone(phone, 'en-IN')) {
-                throw new Error("Invalid Phone");
-            }
+        validate: {
+            validator: function (phone) {
+                return isMobilePhone(phone, 'en-IN'); // Validate phone number format
+            },
+            message: "Invalid Phone"
         }
     },
     pinCode: {
         type: String,
         required: [true, "Pin Code is required"],
-        validate(pinCode) {
-            if (!validator.isPostalCode(pinCode, 'IN')) {
-                throw new Error("Invalid Pin Code");
-            }
+        validate: {
+            validator: function (pinCode) {
+                return isPostalCode(pinCode, 'IN'); // Validate Indian postal code
+            },
+            message: "Invalid Pin Code"
         }
     },
     address: {
@@ -52,6 +55,4 @@ const addressSchema = new mongoose.Schema({
     }
 });
 
-const address = new mongoose.model('address', addressSchema);
-
-module.exports = address;
+export const addressModel = model('Address', addressSchema);
