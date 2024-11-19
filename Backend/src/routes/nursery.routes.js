@@ -1,22 +1,17 @@
 // const mongoose = require('mongoose');
 import { Router } from 'express';
-const router = Router();
+
 import {verifyJWT} from '../middlewares/auth.js';
-import { createNurseryProfile, getNurseryDetail, updateNurseryDetail} from '../controllers/nursery.controller.js';
+import { createNurseryProfile,verifyNurseryEmail,getNurseryDetail } from '../controllers/nursery.controller.js';
+const router = Router();
 
-router.use(verifyJWT);
 
-router.post('/profile', createNurseryProfile);
-router.route('/profile')
+router.post('/profile', verifyJWT,createNurseryProfile);
+router.route('/profile/:id')
     .get(getNurseryDetail)
-    .patch(updateNurseryDetail)
-    // .delete(deleteNurseryDetail);
+router.post('/verify-nursery-email', verifyNurseryEmail);
+    // .patch(updateNurseryDetail)
 
-// router.route('/profile/images')
-//     .post(uploadNurseryImage)
-//     .get(getNurseryImages) // todo:  need to work on 
-//     .patch(updateNurseryImages) // todo:  need to work on 
-//     .delete(deleteNurseryImage) // todo:  need to work on 
 
 
 export default router;

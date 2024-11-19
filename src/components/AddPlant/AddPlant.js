@@ -1,27 +1,74 @@
 // src/components/AddPlant.js
 
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const AddPlant = () => {
+    const navigate = useNavigate();
     const [plantName, setPlantName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleFormSubmit = (e) => {
+    const getUserIdFromToken = () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload._id;
+        }
+        return null;
+    };
+
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        // Logic to handle form submission and add plant details
-        console.log({
-            plantName,
-            price,
-            description,
-            image
-        });
-        // After submission, you might want to redirect or clear the form
+        const userId = getUserIdFromToken();
+
+        if (!userId) {
+            alert('User is not authenticated');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('plantName', plantName);
+        formData.append('price', price);
+        formData.append('description', description);
+        formData.append('image', image);
+        formData.append('userId', userId);
+
+        try {
+            setIsLoading(true);
+            const response = await fetch('http://localhost:4000/api/v1/plant/add-plant', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Plant added successfully!');
+                navigate('/My-plant');
+            } else {
+                alert(result.message || 'Failed to add the plant.');
+            }
+        } catch (error) {
+            console.error('Error adding plant:', error);
+            alert('Something went wrong. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file && file.type.startsWith("image/")) {
+            setImage(file);
+        } else {
+            alert("Please upload a valid image file.");
+        }
     };
 
     return (
@@ -69,12 +116,19 @@ const AddPlant = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
-                    Add Plant
+                <button 
+                    type="submit" 
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Adding..." : "Add Plant"}
                 </button>
             </form>
         </div>
     );
 };
 
+
+
 export default AddPlant;
+

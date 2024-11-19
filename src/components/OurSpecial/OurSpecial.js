@@ -11,7 +11,7 @@ import icon5 from '../../assets/service-icon5.png';
 import icon6 from '../../assets/service-icon6.png';
 import IconWithBackground from './IconWithBackground';
 import './OurSpecial.css'; 
-
+import { Link } from "react-router-dom";
 const OurSpecial = () => {
     const { ref, inView } = useInView({
         triggerOnce: true,
@@ -42,7 +42,7 @@ const OurSpecial = () => {
                     <img src={specialImage} alt="Special" className=" w-100 object-cover" />
                     <div className="absolute  flex flex-col items-center justify-center  text-white">
                         <h2 className="text-4xl mt-20 font-bold mb-1">PlantPros</h2>
-                        <button className="bg-green-500 text-white px-4 py-2 mt-10 rounded">Buy Now</button>
+                        <Link to ="/plants " className="bg-green-500 text-white px-4 py-2 mt-10 rounded">Buy Now</Link>
                     </div>
                 </div>
                 <div className={`flex flex-col items-start pl-8 w-1/3 space-y-4 text-left transition-transform duration-700 ${inView ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>

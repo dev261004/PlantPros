@@ -21,7 +21,7 @@ export const verifyJWT = asyncHandler(async(req, _, next) => {
     
         req.user = user;
         req.role = user.role; // Ensure role is correctly assigned
-        req.nursery = user.nursery; // Ensure nursery is correctly assigned (if applicable)
+        req.nursery = user.nursery || {}; // Ensure nursery is correctly assigned (if applicable)
         next();
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid access token");

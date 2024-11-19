@@ -16,7 +16,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowecase: true,
+            lowercase: true,
             trim: true, 
         },
         fullName: {
@@ -25,7 +25,11 @@ const userSchema = new Schema(
             trim: true, 
             index: true
         },
-
+        nursery: {
+            type: Schema.Types.ObjectId, // Reference to nursery collection (if applicable)
+            ref: "Nursery", // Optional, if you want to reference another collection for nursery data
+            default: null // Make it optional
+        },
         password: {
             type: String,
             required: [true, 'Password is required']

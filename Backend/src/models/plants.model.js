@@ -1,104 +1,39 @@
 import mongoose from "mongoose";
-const plantsSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-        required: [true, "User Id is required."],
-        immutable: true
-    },
-    nursery: {
-        type: mongoose.Schema.ObjectId,
-        ref: "nursery",
-        required: [true, "Nursery Id is required."],
-        immutable: true
-    },
+
+const plantSchema = new mongoose.Schema({
     plantName: {
         type: String,
-        required: [true, "Plant Name is required."]
+        required: true
     },
     price: {
         type: Number,
-        required: [true, "Price is required."],
-        validator(value) {
-            if (value < 0) {
-                throw new Error("Price should not be negative");
-            }
-        }
-    },
-    discount: {
-        type: Number,
-        required: [true, "Discount is required."],
-        validator(value) {
-            if (value < 0 && value > 100) {
-                throw new Error("Discount must be greater then 0 and smaller then 100");
-            }
-        }
-    },
-    stock: {
-        type: Number,
-        required: [true, "Stock is required."],
-        validator(value) {
-            if (value < 0) {
-                throw new Error("Stock should not be negative")
-            }
-        }
-    },
-    category: {
-        type: String,
-        required: [true, "Category is required."]
+        required: true
     },
     description: {
         type: String,
-        required: [true, "Description is required."]
+        required: true
     },
-    images: [
-        {
-            public_id: {
-                type: String,
-                required: [true, "Image public id is required."]
-            },
-            url: {
-                type: String,
-                required: [true, "Image public url is required."]
-            },
-        }
-    ],
-    imagesList: [
-        {
-            public_id: {
-                type: String,
-                required: [true, "Image public id is required."]
-            },
-            url: {
-                type: String,
-                required: [true, "Image public url is required."]
-            },
-        }
-    ],
-    noOfVisit: {
-        type: Number,
-        required: [true, "Number of visit is required."],
-        validator(value) {
-            if (value < 0) {
-                throw new Error("noOfVisit should not be negative")
-            }
-        },
-        default: 0
+    image: {
+        type: String, // Store the image URL or filename (depending on how you handle image uploads)
+        required: true
     },
-    postedAt: {
-        type: Date,
-        default: Date.now,
-        required: [true, "Plant added at is required."]
-    }
-});
+    nursery: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Nursery', 
 
-plantsSchema.methods.increaseVisit = async function () {
-    try {
-        this.noOfVisit++;
-        await this.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
+    },
+    seller: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        
+    },quantity: { type: Number },
+    category: { type: String }, // Optional
+    sunlight: { type: String }, // Optional
+    watering: { type: String }, // Optional
+    sku: { type: String }, // Optional
+}, { timestamps: true });
 
-export const plant = new mongoose.model('plant', plantsSchema);
+const Plant = mongoose.model('Plant', plantSchema);
+
+export default Plant;
+

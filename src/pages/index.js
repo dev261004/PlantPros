@@ -24,8 +24,11 @@ function Home() {
     
         const navigate = useNavigate();
     
+        const handleBuyPlantsClick = () => {
+            navigate('/plants');
+        }
         const handleSellPlantsClick = () => {
-            navigate('/become-seller');
+            navigate('/email-verify');
         }
     return (
         <>
@@ -44,7 +47,7 @@ function Home() {
                     Join our community of plant enthusiasts!
                 </p>
                 <div className="mt-8">
-                    <button className="bg-green-500 text-white px-4 py-2 rounded mr-4">Buy Plants</button>
+                    <button className="bg-green-500 text-white px-4 py-2 rounded mr-4"onClick={handleBuyPlantsClick}>Buy Plants</button>
                     <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleSellPlantsClick}>Sell Plants</button>
                 </div>
             </div>

@@ -94,10 +94,14 @@ const LoginPage = () => {
                 username,
                 password,
             });
+    // Check if token exists in the response
+    console.log('Login response:', res);
 
             // Store JWT in localStorage or cookies
-            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('token', res.data.data.accessToken);  // Store token
+            console.log("Token stored:", res.data.data.accessToken); 
             // Redirect to dashboard or home page
+            // alert("login succesfull")
             navigate('/');
         } catch (err) {
             setError(err.response.data.message || 'Login failed');
