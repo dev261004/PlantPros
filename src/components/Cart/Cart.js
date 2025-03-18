@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
     // // src/components/Cart.js
 
     // import React, { useState, useEffect } from 'react';
@@ -98,11 +99,12 @@ const Cart = () => {
 
     const handleQuantityChange = (id, quantity) => {
         const updatedCartItems = cartItems.map(item =>
-            item.id === id ? { ...item, quantity: parseInt(quantity) } : item
+            item.productId === id ? { ...item, quantity: parseInt(quantity, 10) } : item
         );
-        setCartItems(updatedCartItems);
+        setCartItems([...updatedCartItems]); // Ensure state updates correctly
         localStorage.setItem('cart', JSON.stringify(updatedCartItems));
     };
+    
 
     const handleRemoveItem = (id) => {
         const updatedCartItems = cartItems.filter(item => item.id !== id);
@@ -115,10 +117,10 @@ const Cart = () => {
         setTotal(total);
     };
 
-    const handleCheckout = async () => {
+     const handleCheckout = async () => {
         try {
             // Send cart data to backend for order processing
-            const response = await axios.post('http://localhost:4000/api/cart/orders', { cartItems });
+            const response = await axios.post('http://localhost:4000//api/v1/cart/', { cartItems });
             if (response.status === 200) {
                 alert('Checkout successful!');
                 localStorage.removeItem('cart');
@@ -128,6 +130,7 @@ const Cart = () => {
             alert('Error during checkout');
         }
     };
+    
 
     return (
         <div className="min-h-screen bg-green-50 p-8">

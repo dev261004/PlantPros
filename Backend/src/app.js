@@ -5,6 +5,7 @@ import nurseryRouter from './routes/nursery.routes.js';
 import addressRouter from './routes/address.routes.js';
 import plantRouter from './routes/plant.routes.js';
 import orderRouter from './routes/order.routes.js';
+import cartRouter from './routes/cart.routes.js';
 
 
 import cors from "cors";
@@ -27,5 +28,6 @@ app.use("/api/v1/users", userRouter,addressRouter,forgotPasswordRouter)
 app.use("/api/v1/nursery",nurseryRouter)
 app.use("/api/v1/plant",plantRouter)
 app.use("/api/v1/order",orderRouter)
+app.use("/api/v1/cart",cartRouter)
 
 export {app};
