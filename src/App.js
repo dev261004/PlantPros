@@ -32,6 +32,8 @@ import BuyPlantsPage from "./pages/BuyPlantsPage/BuyPlantsPage";
 import AllPlantPage from "./pages/AllPlantPage/AllPlantPage";
 import AddPlantPage from "./components/AddPlant/AddPlantPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import PlantList from "./pages/PlantInfoPage/PlantList";
+import PlantDetails from "./pages/PlantInfoPage/PlantDetails";
 
 function App() {
     return (
@@ -62,6 +64,8 @@ function App() {
                         <Route path="/plants" element={<AllPlantPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                        <Route path="/plant-info" element={<PlantList />} />
+                        <Route path="/plant/:plantId" element={<PlantDetails />} />
                     </Routes>
                     
                 </main>

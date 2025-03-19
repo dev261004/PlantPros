@@ -29,6 +29,7 @@ const Navbar = () => {
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/about">About</NavLink>
                     <NavLink to="/events">Events</NavLink>
+                    <NavLink to="/plant-info">PlantInfo</NavLink>
                     {/* <NavLink to="/cart">Cart</NavLink> */}
                 </NavMenu>
                 {isAuthenticated ? (
