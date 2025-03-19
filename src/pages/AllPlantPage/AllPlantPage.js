@@ -52,7 +52,7 @@ const AllPlantPage = () => {
         <div className="min-h-screen bg-green-50 p-8">
             <h1 className="text-4xl font-bold text-green-800 mb-8">All Plants</h1>
             {loading ? (
-                <p>Loading plants...</p>
+                <div style={{ fontSize: "2rem", textAlign: "center" }}>🌿 Loading Plants...</div>
             ) : error ? (
                 <p className="text-red-500">{error}</p>
             ) : (

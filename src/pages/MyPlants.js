@@ -36,7 +36,7 @@ const MyPlant = () => {
         <div className="my-plants-dashboard">
             <h1 className="text-xl font-bold mb-4">My Plants</h1>
             {loading ? (
-                <p>Loading plants...</p>
+                <div style={{ fontSize: "2rem", textAlign: "center" }}>🌿 Loading...</div>
             ) : error ? (
                 <p className="text-red-500">{error}</p>
             ) : plants.length > 0 ? (

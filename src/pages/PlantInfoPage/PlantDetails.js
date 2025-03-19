@@ -33,7 +33,7 @@ const PlantDetail = () => {
     }
   }, [plantId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div style={{ fontSize: "2rem", textAlign: "center" }}>🌿 Loading...</div>
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!plantData) return <p>No plant data found</p>;
 
@@ -49,8 +49,8 @@ const PlantDetail = () => {
           src={plantData.default_image.original_url}
           alt={plantData.common_name}
           style={{
-            width: "100%",
-            height: "auto",
+            width: "60%",
+            height: "300px",
             borderRadius: "10px",
             marginBottom: "20px",
           }}

@@ -41,7 +41,7 @@ const BuyPlantPage = () => {
             {error ? (
                 <p className="text-red-500">{error}</p>
             ) : !plant ? (
-                <p>Loading plant details...</p>
+                <div style={{ fontSize: "2rem", textAlign: "center" }}>🌿 Loading Plant Details...</div>
             ) : (
                 <div className="plant-details bg-white p-8 rounded shadow-lg max-w-lg mx-auto">
                     <img

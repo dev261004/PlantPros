@@ -25,7 +25,7 @@ const PlantList = () => {
         fetchPlants();
     }, []);
 
-    if (loading) return <p className="text-center mt-10">Loading plants...</p>;
+    if (loading) return  <div style={{ fontSize: "2rem", textAlign: "center" }}>🌿 Loading...</div>;
 
     return (
         <div className="container mx-auto p-4">
