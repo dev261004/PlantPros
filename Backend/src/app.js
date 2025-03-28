@@ -14,16 +14,17 @@ import bodyParser from 'body-parser';
 const  app= express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}))
+    origin: "http://localhost:3000",  // Replace "*" with your frontend URL
+    credentials: true  // Allow cookies and authorization headers
+}));
 app.use(bodyParser.json());
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-app.use("/api/v1/users", userRouter,addressRouter,forgotPasswordRouter)
+app.use("/api/v1/users", userRouter,addressRouter)
+app.use("/api/v1/forgot-password", forgotPasswordRouter);
 // app.use("/api/v1/users/cart",cartRouter)
 app.use("/api/v1/nursery",nurseryRouter)
 app.use("/api/v1/plant",plantRouter)

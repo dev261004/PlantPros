@@ -22,7 +22,7 @@ const ResetPasswordPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:2610/api/v1/users/reset-password/${token}`, {
+      const response = await fetch(`http://localhost:4000/api/v1/forgot-password/reset-password/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newPassword }),

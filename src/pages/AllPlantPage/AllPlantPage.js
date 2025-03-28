@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios for API calls
 import './AllPlantPage.css';
 
 const AllPlantPage = () => {
@@ -8,14 +9,13 @@ const AllPlantPage = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    // 🔹 Fetch all plants from backend API
     useEffect(() => {
         const fetchPlants = async () => {
             try {
-                const response = await fetch('http://localhost:4000/api/v1/plant/all-plants');
-                const data = await response.json();
-
-                if (data.success) {
-                    setPlants(data.data);
+                const response = await axios.get('http://localhost:4000/api/v1/plant/all-plants');
+                if (response.data.success) {
+                    setPlants(response.data.data);
                 } else {
                     setError('Failed to load plants');
                 }
@@ -30,24 +30,52 @@ const AllPlantPage = () => {
         fetchPlants();
     }, []);
 
+    // 🔹 Navigate to Buy Page
     const handleBuyClick = (plantId) => {
         navigate(`/buy/${plantId}`);
     };
 
-    const handleAddToCart = (plant) => {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existingPlant = cart.find(item => item._id === plant._id);
+    // 🔹 Add to Cart using Backend API
+    // const handleAddToCart = async (plant) => {
+    //     try {
+    //         const response = await axios.post(
+    //             'http://localhost:4000/api/v1/cart/add',
+    //             { productId: plant._id, quantity: 1 },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${localStorage.getItem('token')}` // 🔹 Send user token
+    //                 }
+    //             }
+    //         );
 
-        if (existingPlant) {
-            existingPlant.quantity += 1;
-        } else {
-            cart.push({ ...plant, quantity: 1 });
+    //         if (response.status === 200) {
+    //             alert('Item added to cart successfully!');
+    //             navigate('/cart'); // Redirect to cart after adding item
+    //         }
+    //     } catch (error) {
+    //         console.error('Error adding to cart:', error);
+    //         alert('Failed to add item to cart.');
+    //     }
+    // };
+    const handleAddToCart = async (productId) => {
+        try {
+            const token = localStorage.getItem("token"); // Ensure user is logged in
+            const response = await axios.post(
+                "http://localhost:4000/api/v1/cart/add",
+                { productId, quantity: 1 },  // ✅ Send only the ID
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            console.log("Added to cart:", response.data);
+            navigate("/cart"); // Redirect to cart page
+        } catch (error) {
+            console.error("Error adding to cart:", error);
         }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-        navigate('/cart');
     };
-
+    
+    
+    
     return (
         <div className="min-h-screen bg-green-50 p-8">
             <h1 className="text-4xl font-bold text-green-800 mb-8">All Plants</h1>
@@ -75,7 +103,7 @@ const AllPlantPage = () => {
                                     Buy Now
                                 </button>
                                 <button
-                                    onClick={() => handleAddToCart(plant)}
+                                    onClick={() => handleAddToCart(plant._id)}
                                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
                                 >
                                     Add to Cart

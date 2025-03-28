@@ -37,7 +37,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Password Reset Request",
-    text: `You requested a password reset. Please use the following link to reset your password: ${resetUrl}`,
+    text: `You requested a password reset. Please use the following link to reset your password: ${resetUrl}
+
+Best regards,  
+🌿 PlantPros Team`
   };
 
   await transporter.sendMail(mailOptions);
@@ -50,12 +53,14 @@ const resetPassword = asyncHandler(async (req, res) => {
     const { newPassword } = req.body;
   
     // Hash the token and find user by token and token expiration
+    
     const hashedToken = createHash("sha256").update(token).digest("hex");
+   
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
       resetPasswordExpires: { $gt: Date.now() }, // Ensure token is not expired
     });
-  
+    console.log("user",user);
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }

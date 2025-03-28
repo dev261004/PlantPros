@@ -39,7 +39,8 @@ const userSchema = new Schema(
         }, role: {
             type: [String], // or another appropriate type
             default: []
-        }
+        },resetPasswordToken: {type:String},
+        resetPasswordExpires: {type:Date},
 
     },
     {

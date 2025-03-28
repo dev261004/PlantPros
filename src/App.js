@@ -35,6 +35,7 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import PlantList from "./pages/PlantInfoPage/PlantList";
 import PlantDetails from "./pages/PlantInfoPage/PlantDetails";
 
+
 function App() {
     return (
         <Router>
