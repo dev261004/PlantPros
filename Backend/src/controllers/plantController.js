@@ -1,5 +1,6 @@
 // controllers/plantController.js
 import Plant from '../models/plants.model.js';
+import mongoose from "mongoose";
 
 const addPlant = async (req, res) => {
     try {
@@ -77,7 +78,11 @@ const getPlantsByNursery = async (req, res) => {
     }
 };
 const getPlantById = async (req, res) => {
-    const { plantId } = req.params; // Get plantId from request parameters
+    const { plantId } = req.params;
+    //console.log("planid:",plantId) // Get plantId from request parameters
+    if (!mongoose.Types.ObjectId.isValid(plantId)) {
+        return res.status(400).json({ error: "Invalid Product ID" });
+    }
 
     try {
         const plant = await Plant.findById(plantId); // Find plant by ID

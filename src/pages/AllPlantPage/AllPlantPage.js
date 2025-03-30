@@ -35,31 +35,11 @@ const AllPlantPage = () => {
         navigate(`/buy/${plantId}`);
     };
 
-    // 🔹 Add to Cart using Backend API
-    // const handleAddToCart = async (plant) => {
-    //     try {
-    //         const response = await axios.post(
-    //             'http://localhost:4000/api/v1/cart/add',
-    //             { productId: plant._id, quantity: 1 },
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${localStorage.getItem('token')}` // 🔹 Send user token
-    //                 }
-    //             }
-    //         );
 
-    //         if (response.status === 200) {
-    //             alert('Item added to cart successfully!');
-    //             navigate('/cart'); // Redirect to cart after adding item
-    //         }
-    //     } catch (error) {
-    //         console.error('Error adding to cart:', error);
-    //         alert('Failed to add item to cart.');
-    //     }
-    // };
     const handleAddToCart = async (productId) => {
         try {
             const token = localStorage.getItem("token"); // Ensure user is logged in
+            // eslint-disable-next-line no-unused-vars
             const response = await axios.post(
                 "http://localhost:4000/api/v1/cart/add",
                 { productId, quantity: 1 },  // ✅ Send only the ID
@@ -67,7 +47,8 @@ const AllPlantPage = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            console.log("Added to cart:", response.data);
+            //console.log("Added to cart:", response.data);
+            await new Promise(resolve => setTimeout(resolve, 500));
             navigate("/cart"); // Redirect to cart page
         } catch (error) {
             console.error("Error adding to cart:", error);

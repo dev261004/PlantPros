@@ -5,15 +5,20 @@ import mongoose from "mongoose";
 export const getCart = async (req, res) => {
     try {
         const userId = req.user?.id || req.query.userId;
-        if (!userId) {
-            return res.status(400).json({ message: "User ID is required" });
-        }
+        //console.log("Fetching cart for User ID:", userId);
 
-        const cart = await Cart.findOne({ user: userId }).populate("items.product");
-        if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
-        }
-        res.status(200).json(cart);
+        if (!userId) return res.status(400).json({ message: "User ID is required" });
+
+        const cart = await Cart.findOne({ userId });
+       // console.log("Raw Cart Data:", cart);
+
+        if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+        // Now populate product details
+        const populatedCart = await Cart.findOne({ userId }).populate("items.productId");
+       // console.log("Populated Cart Data:", populatedCart);
+
+        res.status(200).json(populatedCart);
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
     }

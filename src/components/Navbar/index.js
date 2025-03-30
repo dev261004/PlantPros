@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Nav, NavLink, Bars, NavMenu, NavBtn, NavBtnLink } from "./navbarElements";
 import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+import axios from "axios";
+
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -19,6 +22,26 @@ const Navbar = () => {
       setIsAuthenticated(false);
       navigate("/"); // Redirect to home after logout
     };
+
+    const [cartItems, setCartItems] = useState([]);
+
+    // Fetch Cart Items Count from Backend (or Local Storage)
+    useEffect(() => {
+        const fetchCart = async () => {
+            try {
+              const token = localStorage.getItem("token");
+              const response = await axios.get("http://localhost:4000/api/v1/cart/", {
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+            });
+            console.log("Response:", response.data.items.length);
+            setCartItems(response.data.items || []); 
+            } catch (error) {
+                console.error("Error fetching cart items:", error);
+            }
+        };
+
+        fetchCart();
+    }, [cartItems]);
   
     return (
         <>
@@ -30,8 +53,22 @@ const Navbar = () => {
                     <NavLink to="/about">About</NavLink>
                     <NavLink to="/events">Events</NavLink>
                     <NavLink to="/plant-info">PlantInfo</NavLink>
-                    {/* <NavLink to="/cart">Cart</NavLink> */}
+                 
                 </NavMenu>
+                  
+                <div className="flex items-center space-x-6"> 
+                {/* Cart Icon with Proper Spacing */}
+                <Link to="/cart" className="relative text-white hover:text-gray-300 mr-6">
+                    <FaShoppingCart size={24} />
+                    {cartItems.length > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                            {cartItems.length}
+                        </span>
+                    )}
+                </Link>
+                </div>
+
+                
                 {isAuthenticated ? (
                     <div className="flex ijustify-center items-center">
                     <Link to="/profile">
