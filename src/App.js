@@ -53,7 +53,7 @@ function App() {
                         <Route path="/sign-up" element={<SignUp />} />
                         <Route path="/category/:id" element={<CategoryDetails />} />
                         <Route path="/cart" element={<Cart />} /> 
-                        <Route path="/product/:id" Component={ProductDetails} />
+                        <Route path="/product/:id" Component={<ProductDetails/>} />
                         <Route path="/become-seller" element={<SellerForm />} />
                         <Route path="/email-verify" element={<EmailVerificationPage />} />
                         <Route path="/seller-dashboard" element={<SellerDashboard/>} />

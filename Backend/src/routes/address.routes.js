@@ -1,8 +1,10 @@
-import { Router } from "express";
-const router = Router();
 import {verifyJWT} from '../middlewares/auth.js';
 
 import { addAddress, getAddressList, getAddressById, updateAddress, deleteAddress, getDefaultAddress } from '../controllers/address.controller.js';
+
+
+import { Router } from "express";
+const router = Router();
 
 router.use(verifyJWT); //* Auth middleware
 

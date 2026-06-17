@@ -1,92 +1,168 @@
 import React, { useState, useEffect } from "react";
-import { Nav, NavLink, Bars, NavMenu, NavBtn, NavBtnLink } from "./navbarElements";
-import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import {
+    Actions,
+    Bars,
+    BrandLink,
+    BrandMark,
+    BrandText,
+    CartBadge,
+    CartLink,
+    LogoutButton,
+    MobileActions,
+    MobileMenu,
+    Nav,
+    NavBtn,
+    NavBtnLink,
+    NavInner,
+    NavLink,
+    NavMenu,
+    ProfileLink,
+    ProfileWrap,
+} from "./navbarElements";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaBars, FaLeaf, FaShoppingCart, FaTimes, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
 
+const navLinks = [
+    { to: "/", label: "Home", end: true },
+    { to: "/plants", label: "Plants" },
+    { to: "/about", label: "About" },
+    { to: "/events", label: "Events" },
+    { to: "/plant-info", label: "Plant Info" },
+];
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-    // Check if the user is logged in (you can store the user token or authentication state in localStorage)
+    const [cartItems, setCartItems] = useState([]);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     useEffect(() => {
-      const token = localStorage.getItem("token"); 
-      if (token) {
-        setIsAuthenticated(true);
-      }
-    }, []);
-  
+        setIsAuthenticated(Boolean(localStorage.getItem("token")));
+        setIsMenuOpen(false);
+    }, [location.pathname]);
+
     const handleLogout = () => {
-      localStorage.removeItem("token"); // Clear the auth token or user data
-      setIsAuthenticated(false);
-      navigate("/"); // Redirect to home after logout
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+        setCartItems([]);
+        setIsMenuOpen(false);
+        navigate("/");
     };
 
-    const [cartItems, setCartItems] = useState([]);
-
-    // Fetch Cart Items Count from Backend (or Local Storage)
     useEffect(() => {
         const fetchCart = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                setCartItems([]);
+                return;
+            }
+
             try {
-              const token = localStorage.getItem("token");
-              const response = await axios.get("http://localhost:4000/api/v1/cart/", {
-                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-            });
-            console.log("Response:", response.data.items.length);
-            setCartItems(response.data.items || []); 
+                const response = await axios.get("http://localhost:4000/api/v1/cart/", {
+                    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                });
+                setCartItems(response.data.items || []);
             } catch (error) {
                 console.error("Error fetching cart items:", error);
             }
         };
 
         fetchCart();
-    }, [cartItems]);
-  
+    }, [isAuthenticated, location.pathname]);
+
+    const cartCount = cartItems.length;
+    const displayedCartCount = cartCount > 99 ? "99+" : cartCount;
+
+    const closeMenu = () => setIsMenuOpen(false);
+
     return (
-        <>
-            <Nav>
-                <Bars />
+        <Nav>
+            <NavInner>
+                <BrandLink to="/" aria-label="PlantPros home">
+                    <BrandMark>
+                        <FaLeaf size={20} />
+                    </BrandMark>
+                    <BrandText>
+                        PlantPros
+                        <small>Marketplace</small>
+                    </BrandText>
+                </BrandLink>
 
                 <NavMenu>
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/about">About</NavLink>
-                    <NavLink to="/events">Events</NavLink>
-                    <NavLink to="/plant-info">PlantInfo</NavLink>
-                 
+                    {navLinks.map((link) => (
+                        <NavLink key={link.to} to={link.to} end={link.end}>
+                            {link.label}
+                        </NavLink>
+                    ))}
                 </NavMenu>
-                  
-                <div className="flex items-center space-x-6"> 
-                {/* Cart Icon with Proper Spacing */}
-                <Link to="/cart" className="relative text-white hover:text-gray-300 mr-6">
-                    <FaShoppingCart size={24} />
-                    {cartItems.length > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                            {cartItems.length}
-                        </span>
-                    )}
-                </Link>
-                </div>
 
-                
+                <Actions>
+                    <CartLink to="/cart" aria-label={`Cart with ${cartCount} items`}>
+                        <FaShoppingCart size={19} />
+                        {cartCount > 0 && <CartBadge>{displayedCartCount}</CartBadge>}
+                    </CartLink>
+
+                    {isAuthenticated ? (
+                        <ProfileWrap>
+                            <ProfileLink to="/profile" aria-label="Profile">
+                                <FaUserCircle size={22} />
+                            </ProfileLink>
+                            <LogoutButton type="button" onClick={handleLogout}>
+                                Logout
+                            </LogoutButton>
+                        </ProfileWrap>
+                    ) : (
+                        <NavBtn>
+                            <NavBtnLink to="/sign-up">Sign Up</NavBtnLink>
+                            <NavBtnLink to="/login" $variant="ghost">
+                                Login
+                            </NavBtnLink>
+                        </NavBtn>
+                    )}
+
+                    <Bars
+                        type="button"
+                        onClick={() => setIsMenuOpen((current) => !current)}
+                        aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                        aria-expanded={isMenuOpen}
+                    >
+                        {isMenuOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+                    </Bars>
+                </Actions>
+            </NavInner>
+
+            <MobileMenu $isOpen={isMenuOpen}>
+                {navLinks.map((link) => (
+                    <NavLink key={link.to} to={link.to} end={link.end} onClick={closeMenu}>
+                        {link.label}
+                    </NavLink>
+                ))}
+
                 {isAuthenticated ? (
-                    <div className="flex ijustify-center items-center">
-                    <Link to="/profile">
-                      <img src="./image.png" alt="User Profile"  className="w-10 h-10 rounded-full object-cover transition-all duration-300 ease-in-out hover:scale-110" />
-                    </Link>
-                    <button onClick={handleLogout} className="whitespace-nowrap rounded-xl bg-blue-700 px-5 py-3 font-medium text-white">Logout</button>
-                  </div>
+                    <MobileActions $stacked>
+                        <ProfileLink to="/profile" onClick={closeMenu}>
+                            <FaUserCircle size={20} />
+                            Profile
+                        </ProfileLink>
+                        <LogoutButton type="button" onClick={handleLogout}>
+                            Logout
+                        </LogoutButton>
+                    </MobileActions>
                 ) : (
-                  <>
-                   <NavBtn>
-                    <NavBtnLink to="/sign-up">Sign Up</NavBtnLink>
-                    <NavBtnLink to="/login">Login</NavBtnLink>
-                </NavBtn>
-                  </>
+                    <MobileActions>
+                        <NavBtnLink to="/sign-up" onClick={closeMenu}>
+                            Sign Up
+                        </NavBtnLink>
+                        <NavBtnLink to="/login" $variant="ghost" onClick={closeMenu}>
+                            Login
+                        </NavBtnLink>
+                    </MobileActions>
                 )}
-               
-            </Nav>
-        </>
+            </MobileMenu>
+        </Nav>
     );
 };
 

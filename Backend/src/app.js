@@ -30,5 +30,6 @@ app.use("/api/v1/nursery",nurseryRouter)
 app.use("/api/v1/plant",plantRouter)
 app.use("/api/v1/order",orderRouter)
 app.use("/api/v1/cart",cartRouter)
+app.use("/api/v1/",addressRouter)
 
 export {app};
