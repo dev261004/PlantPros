@@ -34,7 +34,7 @@ import AddPlantPage from "./components/AddPlant/AddPlantPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import PlantList from "./pages/PlantInfoPage/PlantList";
 import PlantDetails from "./pages/PlantInfoPage/PlantDetails";
-
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 function App() {
     return (
@@ -67,6 +67,7 @@ function App() {
                         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                         <Route path="/plant-info" element={<PlantList />} />
                         <Route path="/plant/:plantId" element={<PlantDetails />} />
+                        <Route path="/profile" element={<ProfilePage />} />
                     </Routes>
                     
                 </main>
