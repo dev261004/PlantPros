@@ -153,12 +153,14 @@
 // export default CheckoutPage;
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 
 const CheckoutPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [newAddress, setNewAddress] = useState({ name: '', phone: '', address: '', city: '', state: '', pinCode: '', setAsDefault: false });
+    const [editAddressId, setEditAddressId] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
@@ -191,6 +193,32 @@ const CheckoutPage = () => {
         }
     };
 
+    const handleRemoveCartItem = async (productId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.delete(`http://localhost:4000/api/v1/cart/remove/${productId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = response.data;
+            if (data && data.items) {
+                const formattedItems = data.items.map(item => ({
+                    id: item.productId?._id,
+                    name: item.productId?.plantName || item.productId?.name,
+                    price: item.productId?.price,
+                    quantity: item.quantity,
+                    image: item.productId?.image
+                }));
+                setCartItems(formattedItems);
+                setTotalAmount(data.totalPrice || 0);
+            } else {
+                setCartItems([]);
+                setTotalAmount(0);
+            }
+        } catch (error) {
+            console.error('Error removing item from cart:', error);
+        }
+    };
+
     const fetchAddresses = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -212,24 +240,64 @@ const CheckoutPage = () => {
         setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
     };
 
+    const handleEditAddressClick = (addr) => {
+        setNewAddress({
+            name: addr.name || '',
+            phone: addr.phone || '',
+            address: addr.address || '',
+            city: addr.city || '',
+            state: addr.state || '',
+            pinCode: addr.pinCode || '',
+            setAsDefault: addr.setAsDefault || false
+        });
+        setEditAddressId(addr._id);
+    };
+
+    const handleRemoveAddress = async (addressId) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:4000/api/v1/address/${addressId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const updatedAddresses = addresses.filter(addr => addr._id !== addressId);
+            setAddresses(updatedAddresses);
+            if (selectedAddress?._id === addressId) {
+                setSelectedAddress(updatedAddresses.length > 0 ? updatedAddresses[0] : null);
+            }
+        } catch (error) {
+            console.error('Error removing address:', error);
+        }
+    };
+
     const addNewAddress = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post('http://localhost:4000/api/v1/address', newAddress, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const added = response.data.result;
-            const updatedAddresses = [...addresses, added];
-            setAddresses(updatedAddresses);
+            let addedOrUpdated;
+            if (editAddressId) {
+                const response = await axios.patch(`http://localhost:4000/api/v1/address/${editAddressId}`, newAddress, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                addedOrUpdated = response.data.result;
+                const updatedAddresses = addresses.map(addr => addr._id === editAddressId ? addedOrUpdated : addr);
+                setAddresses(updatedAddresses);
+                setEditAddressId(null);
+            } else {
+                const response = await axios.post('http://localhost:4000/api/v1/address', newAddress, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                addedOrUpdated = response.data.result;
+                const updatedAddresses = [...addresses, addedOrUpdated];
+                setAddresses(updatedAddresses);
+            }
             
             if (newAddress.setAsDefault || addresses.length === 0) {
-                setSelectedAddress(added);
+                setSelectedAddress(addedOrUpdated);
             }
             
             // Clear the form
             setNewAddress({ name: '', phone: '', address: '', city: '', state: '', pinCode: '', setAsDefault: false });
         } catch (error) {
-            console.error('Error adding address:', error);
+            console.error('Error saving address:', error);
         }
     };
 
@@ -287,7 +355,12 @@ const CheckoutPage = () => {
                                                 <p className="text-gray-600">₹{item.price} x {item.quantity}</p>
                                             </div>
                                         </div>
-                                        <p className="font-semibold">₹{(item.price || 0) * (item.quantity || 1)}</p>
+                                        <div className="flex items-center space-x-4">
+                                            <p className="font-semibold">₹{(item.price || 0) * (item.quantity || 1)}</p>
+                                            <button onClick={() => handleRemoveCartItem(item.id)} className="text-red-500 hover:text-red-700 transition" aria-label="Remove item">
+                                                <FaTrash />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                             )}
@@ -302,23 +375,33 @@ const CheckoutPage = () => {
                         <h2 className="text-xl font-semibold text-green-700 mb-4">Shipping Details</h2>
                         <div className="bg-white p-6 rounded-lg shadow-lg">
                             {addresses.length > 0 && (
-                                <div className="mb-6">
+                                <div className="mb-6 space-y-3">
                                     <label className="block text-gray-700 font-medium mb-2">Select Address</label>
-                                    <select 
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        value={selectedAddress?._id || ''}
-                                        onChange={(e) => setSelectedAddress(addresses.find(addr => addr._id === e.target.value))}
-                                    >
-                                        <option value="" disabled>Select an address</option>
-                                        {addresses.map(addr => (
-                                            <option key={addr._id} value={addr._id}>{addr.name} - {addr.address} ({addr.phone})</option>
-                                        ))}
-                                    </select>
+                                    {addresses.map(addr => (
+                                        <div key={addr._id} className={`p-4 border rounded-lg flex items-center justify-between cursor-pointer transition ${selectedAddress?._id === addr._id ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'}`} onClick={() => setSelectedAddress(addr)}>
+                                            <div className="flex items-start">
+                                                <input type="radio" checked={selectedAddress?._id === addr._id} onChange={() => setSelectedAddress(addr)} className="mt-1 mr-3 text-green-600 focus:ring-green-500" />
+                                                <div>
+                                                    <p className="font-semibold text-gray-800">{addr.name} {addr.setAsDefault && <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Default</span>}</p>
+                                                    <p className="text-sm text-gray-600">{addr.address}, {addr.city}, {addr.state} - {addr.pinCode}</p>
+                                                    <p className="text-sm text-gray-600">Phone: {addr.phone}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex space-x-3">
+                                                <button onClick={(e) => { e.stopPropagation(); handleEditAddressClick(addr); }} className="text-blue-500 hover:text-blue-700 p-2" aria-label="Edit address">
+                                                    <FaEdit />
+                                                </button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleRemoveAddress(addr._id); }} className="text-red-500 hover:text-red-700 p-2" aria-label="Remove address">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             )}
                             
                             <div className="border-t pt-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Address</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">{editAddressId ? 'Edit Address' : 'Add New Address'}</h3>
                                 <div className="space-y-4">
                                     <input type="text" name="name" value={newAddress.name} placeholder="Full Name" onChange={handleAddressChange} className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                                     <input type="text" name="phone" value={newAddress.phone} placeholder="Phone Number (10 digits)" onChange={handleAddressChange} className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
@@ -332,7 +415,10 @@ const CheckoutPage = () => {
                                         <input type="checkbox" name="setAsDefault" checked={newAddress.setAsDefault} onChange={(e) => setNewAddress({ ...newAddress, setAsDefault: e.target.checked })} className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" /> 
                                         <span>Set as Default Address</span>
                                     </label>
-                                    <button onClick={addNewAddress} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">Save Address</button>
+                                    <button onClick={addNewAddress} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300">{editAddressId ? 'Update Address' : 'Save Address'}</button>
+                                    {editAddressId && (
+                                        <button onClick={() => { setEditAddressId(null); setNewAddress({ name: '', phone: '', address: '', city: '', state: '', pinCode: '', setAsDefault: false }); }} className="ml-4 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition duration-300">Cancel Edit</button>
+                                    )}
                                 </div>
                             </div>
                         </div>

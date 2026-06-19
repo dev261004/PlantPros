@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const BuyPlantPage = () => {
     const { plantId } = useParams(); // Get plantId from URL
@@ -28,12 +29,28 @@ const BuyPlantPage = () => {
         fetchPlantDetails();
     }, [plantId]);
 
-    const handleBuy = () => {
+    const handleBuy = async () => {
         if (!plant) return;
         
-        // Proceed with the checkout process
-        console.log(`Buying ${quantity} of ${plant.plantName}`);
-        navigate('/checkout'); // Redirect to the checkout page
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            // Add item to cart first
+            await axios.post('http://localhost:4000/api/v1/cart/add', 
+                { productId: plant._id, quantity: Number(quantity) },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            // Then proceed to checkout
+            navigate('/checkout');
+        } catch (err) {
+            console.error("Error adding to cart before checkout:", err);
+            setError('Failed to process purchase. Please try again.');
+        }
     };
 
     return (
