@@ -38,3 +38,18 @@ export const createOrder = async (req, res) => {
         res.status(500).json({ message: 'Server Error: Could not create order' });
     }
 };
+
+export const getUserOrders = async (req, res) => {
+    try {
+        const userId = req.user?._id || req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized access' });
+        }
+
+        const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
+        res.status(200).json({ success: true, data: orders });
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Server Error: Could not fetch orders' });
+    }
+};

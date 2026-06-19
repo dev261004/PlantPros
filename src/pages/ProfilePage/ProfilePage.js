@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaUserCircle, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
+import { FaUserCircle, FaEnvelope, FaLock, FaUser, FaBox } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
@@ -18,6 +18,11 @@ const ProfilePage = () => {
     const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
     const [passwordSuccess, setPasswordSuccess] = useState('');
     const [passwordError, setPasswordError] = useState('');
+
+    // Orders State
+    const [orders, setOrders] = useState([]);
+    const [loadingOrders, setLoadingOrders] = useState(false);
+    const [ordersError, setOrdersError] = useState('');
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -49,6 +54,30 @@ const ProfilePage = () => {
 
         fetchUserProfile();
     }, [navigate]);
+
+    useEffect(() => {
+        if (activeTab === 'orders') {
+            const fetchOrders = async () => {
+                setLoadingOrders(true);
+                setOrdersError('');
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await axios.get('http://localhost:4000/api/v1/order', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (response.data.success) {
+                        setOrders(response.data.data);
+                    }
+                } catch (err) {
+                    console.error("Error fetching orders", err);
+                    setOrdersError('Failed to load your orders.');
+                } finally {
+                    setLoadingOrders(false);
+                }
+            };
+            fetchOrders();
+        }
+    }, [activeTab]);
 
     const handlePersonalInfoChange = (e) => {
         setPersonalInfo({ ...personalInfo, [e.target.name]: e.target.value });
@@ -155,6 +184,12 @@ const ProfilePage = () => {
                             className={`flex-1 py-4 px-6 text-center font-medium text-sm transition duration-150 ${activeTab === 'security' ? 'text-green-700 border-b-2 border-green-600 bg-white' : 'text-gray-500 hover:text-green-600 hover:bg-gray-100'}`}
                         >
                             Security Settings
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('orders')}
+                            className={`flex-1 py-4 px-6 text-center font-medium text-sm transition duration-150 ${activeTab === 'orders' ? 'text-green-700 border-b-2 border-green-600 bg-white' : 'text-gray-500 hover:text-green-600 hover:bg-gray-100'}`}
+                        >
+                            My Orders
                         </button>
                     </div>
 
@@ -282,6 +317,78 @@ const ProfilePage = () => {
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                        )}
+
+                        {activeTab === 'orders' && (
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-6">Order History</h2>
+                                
+                                {ordersError && <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{ordersError}</div>}
+
+                                {loadingOrders ? (
+                                    <div className="flex justify-center py-10">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-green-500"></div>
+                                    </div>
+                                ) : orders.length === 0 ? (
+                                    <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                                        <FaBox className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                                        <h3 className="text-lg font-medium text-gray-900">No orders yet</h3>
+                                        <p className="mt-1 text-gray-500">When you place an order, it will show up here.</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        {orders.map((order) => (
+                                            <div key={order._id} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                                                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4">
+                                                    <div>
+                                                        <p className="text-sm text-gray-500">Order Placed</p>
+                                                        <p className="font-medium text-gray-800">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-gray-500">Total</p>
+                                                        <p className="font-medium text-gray-800">₹{order.totalAmount}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-gray-500">Order ID</p>
+                                                        <p className="font-mono text-sm text-gray-600">{order._id.slice(-8).toUpperCase()}</p>
+                                                    </div>
+                                                    <div>
+                                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                            order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                            order.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                                            'bg-gray-100 text-gray-800'
+                                                        }`}>
+                                                            {order.status}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white p-6">
+                                                    <ul className="divide-y divide-gray-200">
+                                                        {order.cartItems.map((item, idx) => (
+                                                            <li key={idx} className="py-4 flex items-center">
+                                                                <img src={item.image} alt={item.name} className="h-16 w-16 object-cover rounded-md border border-gray-200" />
+                                                                <div className="ml-4 flex-1">
+                                                                    <p className="font-medium text-gray-900">{item.name}</p>
+                                                                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <p className="font-medium text-gray-900">₹{item.price}</p>
+                                                                </div>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                                        <p className="text-sm font-medium text-gray-700">Shipping To:</p>
+                                                        <p className="text-sm text-gray-600 mt-1">{order.shippingDetails.name}</p>
+                                                        <p className="text-sm text-gray-600">{order.shippingDetails.address}</p>
+                                                        <p className="text-sm text-gray-600">Phone: {order.shippingDetails.phone}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
