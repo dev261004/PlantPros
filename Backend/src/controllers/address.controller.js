@@ -14,6 +14,7 @@ export async function addAddress(req, res, next) {
         }
 
         //* Add new address
+        req.body.user = req.user._id || req.user.id;
         const newAddress = new addressModel(req.body);
         await newAddress.save({ session });
         await session.commitTransaction(); //* Commit transaction

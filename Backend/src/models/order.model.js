@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema({
     cartItems: [
         {
-            id: { type: Number },
+            id: { type: String },
             name: { type: String },
             price: { type: Number },
             quantity: { type: Number },

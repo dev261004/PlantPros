@@ -3,10 +3,12 @@
 // src/components/Cart.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
+    const navigate = useNavigate();
 
     // Fetch cart from API on component mount
     useEffect(() => {
@@ -105,18 +107,8 @@ const Cart = () => {
     };
 
     // Handle checkout
-    const handleCheckout = async () => {
-        try {
-            const response = await axios.post('http://localhost:4000/api/v1/cart/checkout', { cartItems });
-
-            if (response.status === 200) {
-                alert('Checkout successful!');
-                setCartItems([]);
-            }
-        } catch (error) {
-            console.error('Checkout error:', error.response?.data || error.message);
-            alert(`Error during checkout: ${error.response?.data?.message || error.message}`);
-        }
+    const handleCheckout = () => {
+        navigate('/checkout');
     };
 
     return (
