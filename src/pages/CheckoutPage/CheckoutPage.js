@@ -328,14 +328,15 @@ const CheckoutPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
-            <h1 className="text-5xl font-bold text-green-800 mb-8">Checkout</h1>
-            {success ? (
-                <div className="bg-green-100 p-6 rounded-lg text-center shadow-lg">
-                    <h2 className="text-2xl text-green-700 font-bold mb-2">Order placed successfully!</h2>
-                    <p className="text-green-600">Thank you for your purchase.</p>
-                </div>
-            ) : (
-                <div className="space-y-8">
+            <div className="max-w-5xl mx-auto">
+                <h1 className="text-5xl font-bold text-green-800 mb-8">Checkout</h1>
+                {success ? (
+                    <div className="bg-green-100 p-6 rounded-lg text-center shadow-lg">
+                        <h2 className="text-2xl text-green-700 font-bold mb-2">Order placed successfully!</h2>
+                        <p className="text-green-600">Thank you for your purchase.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-8">
                     <div>
                         <h2 className="text-xl font-semibold text-green-700 mb-4">Order Summary</h2>
                         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -434,6 +435,7 @@ const CheckoutPage = () => {
                     </button>
                 </div>
             )}
+            </div>
         </div>
     );
 };
